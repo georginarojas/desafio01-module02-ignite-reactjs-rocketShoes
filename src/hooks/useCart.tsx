@@ -1,10 +1,4 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { api } from "../services/api";
 import { Product, Stock } from "../types";
@@ -25,9 +19,6 @@ interface CartContextData {
   updateProductAmount: ({ productId, amount }: UpdateProductAmount) => void;
 }
 
-type ProductFormat = Omit<Product, "amount">;
-type StockFormat = Pick<Product, "id" | "amount">;
-
 const CartContext = createContext<CartContextData>({} as CartContextData);
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
@@ -40,10 +31,37 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     return [];
   });
 
+  // -- Get products by ID
+  async function getProductById(id: number) {
+    const response = await api.get(`/products/${id}`);
+    return response.data;
+  }
+
+  // -- Get stock by ID
+  async function getStockById(id: number) {
+    const response = await api.get(`/stock/${id}`);
+    return response.data;
+  }
+
+  // -- Set cart products
+  function setCartProduct(product: Product[]) {
+    setCart([...product]);
+    localStorage.setItem("@RocketShoes:cart", JSON.stringify(product));
+  }
+
+  // --- Adding product to cart
   const addProduct = async (productId: number) => {
     try {
-      const product = await getProduct(productId);
-      const stock = await getStock(productId);
+      const product: Product = await getProductById(productId);
+      const stock: Stock = await getStockById(productId);
+
+      if (!product) {
+        throw new Error();
+      }
+
+      if (!stock) {
+        throw new Error();
+      }
 
       const newProductCart: Product = {
         id: product.id,
@@ -54,52 +72,65 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       };
 
       let cartProduct = cart.find((cart) => cart.id === productId);
-      let cartIndex = cart.findIndex((cart) => cart.id === productId);
 
-
-      // ** Conditions **
-      if (cartProduct !== undefined) {
-        if (stock.amount >= 1 && cart[cartIndex].amount <= stock.amount) {
-          cart[cartIndex].amount += 1;
-          setCart([...cart]);
-        } else {
-          toast.error("Quantidade solicitada fora de estoque");
-        }
+      if (!cartProduct) {
+        let newCart = [...cart, newProductCart];
+        setCartProduct(newCart);
       } else {
-        setCart([...cart, newProductCart]);
+        updateProductAmount({
+          productId: productId,
+          amount: cartProduct.amount + 1,
+        });
       }
-      // localStorage.setItem("@RocketShoes:cart", JSON.stringify(cart));
     } catch {
       toast.error("Error na adição do produto");
     }
   };
 
-  async function getProduct(id: number) {
-    const response = await api.get(`/products/${id}`);
-    return response.data;
-  }
-
-  async function getStock(id: number) {
-    const response = await api.get(`/stock/${id}`);
-    return response.data;
-  }
-
+  // -- Removing product from cart
   const removeProduct = (productId: number) => {
     try {
-      // TODO
+      let product = cart.find((cart) => cart.id === productId);
+      if (!product) {
+        throw new Error();
+      }
+      let newCart = cart.filter((product) => product.id !== productId);
+      setCartProduct(newCart);
     } catch {
-      // TODO
+      toast.error("Erro na remoção do produto");
     }
   };
 
+  // -- Updating list products of cart
   const updateProductAmount = async ({
     productId,
     amount,
   }: UpdateProductAmount) => {
     try {
-      // TODO
+      const stock = await getStockById(productId);
+
+      if (!stock) {
+        throw new Error();
+      }
+
+      if (amount < 1) {
+        throw new Error();
+      }
+
+      if (amount > stock.amount) {
+        toast.error("Quantidade solicitada fora de estoque");
+        return;
+      }
+
+      if (amount <= stock.amount) {
+        let cartIndex = cart.findIndex((cart) => cart.id === productId);
+        cart[cartIndex].amount = amount;
+        let newCart = [...cart];
+        setCartProduct(newCart);
+        return newCart;
+      }
     } catch {
-      // TODO
+      toast.error("Erro na alteração de quantidade do produto");
     }
   };
 

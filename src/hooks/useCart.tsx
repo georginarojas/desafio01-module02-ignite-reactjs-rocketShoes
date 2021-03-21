@@ -52,30 +52,26 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
   // --- Adding product to cart
   const addProduct = async (productId: number) => {
     try {
-      const product: Product = await getProductById(productId);
       const stock: Stock = await getStockById(productId);
-
-      if (!product) {
-        throw new Error();
-      }
 
       if (!stock) {
         throw new Error();
       }
 
-      const newProductCart: Product = {
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.image,
-        amount: 1,
-      };
-
       let cartProduct = cart.find((cart) => cart.id === productId);
 
       if (!cartProduct) {
+        const product: Product = await getProductById(productId);
+        if (!product) {
+          throw new Error();
+        }
+        const newProductCart: Product = {
+          ...product,
+          amount: 1,
+        };
         let newCart = [...cart, newProductCart];
         setCartProduct(newCart);
+        return;
       } else {
         updateProductAmount({
           productId: productId,
@@ -83,7 +79,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         });
       }
     } catch {
-      toast.error("Error na adição do produto");
+      toast.error("Erro na adição do produto");
     }
   };
 
@@ -113,13 +109,13 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         throw new Error();
       }
 
-      if (amount < 1) {
-        throw new Error();
+      if (amount > stock.amount) {
+        toast.error('Quantidade solicitada fora de estoque');
+        return;
       }
 
-      if (amount > stock.amount) {
-        toast.error("Quantidade solicitada fora de estoque");
-        return;
+      if (amount < 1) {
+        throw new Error();
       }
 
       if (amount <= stock.amount) {
@@ -127,7 +123,6 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         cart[cartIndex].amount = amount;
         let newCart = [...cart];
         setCartProduct(newCart);
-        return newCart;
       }
     } catch {
       toast.error("Erro na alteração de quantidade do produto");

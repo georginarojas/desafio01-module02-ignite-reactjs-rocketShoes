@@ -7,7 +7,7 @@
   <a href="#-tests-specifications">Tests Specifications</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
 </p>
 
-![Demo Rocketshoes](https://gifs.com/gif/rocketshoes-zv2lN8)
+![Demo Rocketshoes](https://j.gifs.com/zv2lN8.gif)
 
 ## Description
 For this challenge, was implemented a shopping cart, the user can be select the product to buy, increment o decrement the amount of products and remove items of cart. 

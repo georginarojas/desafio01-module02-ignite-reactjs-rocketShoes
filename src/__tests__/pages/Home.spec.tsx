@@ -1,5 +1,5 @@
 import AxiosMock from 'axios-mock-adapter';
-import { waitFor, render, fireEvent } from '@testing-library/react';
+import { waitFor, render, fireEvent, screen } from '@testing-library/react';
 
 import { api } from '../../services/api';
 import Home from '../../pages/Home';
@@ -63,11 +63,13 @@ describe('Home Page', () => {
   });
 
   it('should be able to render each product quantity added to cart', async () => {
-    const { getAllByTestId } = render(<Home />);
+    const { getAllByTestId, findAllByTestId } = render(<Home />);
 
-    await waitFor(() => getAllByTestId('cart-product-quantity'), {
-      timeout: 200,
-    });
+    // await waitFor(() => getAllByTestId('cart-product-quantity'), {
+    //   timeout: 200,
+    // });
+
+    await findAllByTestId('cart-product-quantity');
 
     const [
       firstProductCartQuantity,
@@ -80,8 +82,8 @@ describe('Home Page', () => {
     expect(thirdProductCartQuantity).toHaveTextContent('0');
   });
 
-  it('should be able to add a product to cart', async () => {
-    const { getAllByTestId, rerender } = render(<Home />);
+  it('should be able to add a product to cart (first on the list)', async () => {
+    const { getAllByTestId, rerender} = render(<Home />);
 
     await waitFor(() => getAllByTestId('add-product-button'), {
       timeout: 200,
@@ -90,8 +92,7 @@ describe('Home Page', () => {
     const [addFirstProduct] = getAllByTestId('add-product-button');
 
     fireEvent.click(addFirstProduct);
-
-    expect(mockedAddProduct).toHaveBeenCalledWith(1);
+    expect(mockedAddProduct).toHaveBeenCalledWith(1); // ID
 
     mockedUseCartHook.mockReturnValueOnce({
       cart: [
@@ -111,5 +112,39 @@ describe('Home Page', () => {
     const [firstProductCartQuantity] = getAllByTestId('cart-product-quantity');
 
     expect(firstProductCartQuantity).toHaveTextContent('3');
+  });
+
+  it('should be able to add a product to cart (last on the list)', async () => {
+    const { getAllByTestId, rerender} = render(<Home />);
+
+    await waitFor(() => getAllByTestId('add-product-button'), {
+      timeout: 200,
+    });
+
+    const productList = getAllByTestId('add-product-button');
+
+    fireEvent.click(productList[2]);
+    expect(mockedAddProduct).toHaveBeenCalledWith(3);
+    expect(mockedAddProduct).toHaveBeenCalled();
+    expect(productList.length).toBe(3);
+
+    mockedUseCartHook.mockReturnValueOnce({
+      cart: [
+        {
+          amount: 1,
+          id: 3,
+          title: 'Tênis Adidas Duramo Lite 2.0',
+          price: 219.9,
+          image:
+            'https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis3.jpg',
+        },
+      ],
+    });
+
+    rerender(<Home />);
+
+    const productsCart = getAllByTestId('cart-product-quantity');
+
+    expect(productsCart[2]).toHaveTextContent('1');
   });
 });

@@ -7,7 +7,7 @@ import { formatPrice } from "../../util/format";
 import { useCart } from "../../hooks/useCart";
 
 import { useDispatch, useSelector } from "react-redux";
-import {setProducts} from '../../state-management/cart/cartSlice'
+import {setProducts} from '../../state-management/products/productSlice'
 import { RootState } from "../../state-management/store";
 
 interface Product {
@@ -29,7 +29,7 @@ const Home = (): JSX.Element => {
   // const [products, setProducts] = useState<ProductFormatted[]>([]);
   const { addProduct, cart } = useCart();
   const dispatch = useDispatch()
-  const products = useSelector((state: RootState) => state.cart.productList) as Product[];
+  const products = useSelector((state: RootState) => state.products.data) as Product[];
 
     const cartItemsAmount = cart.reduce((sumAmount, product) => {
       let key = product.id;

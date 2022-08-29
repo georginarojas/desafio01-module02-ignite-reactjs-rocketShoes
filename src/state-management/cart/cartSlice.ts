@@ -1,15 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Product, Stock } from "../../types";
+import { Product } from "../../types";
 import reducers from "./reducers";
 
 export interface CartState {
-  productList: Product[];
-  stockList: Stock[];
+  data: Product[];
 }
 
 const initialState: CartState = {
-  productList: [],
-  stockList: [],
+  data: [],
 };
 
 export const cartSlice = createSlice({
@@ -18,6 +16,6 @@ export const cartSlice = createSlice({
   reducers: reducers,
 });
 
-export const { setProducts } = cartSlice.actions;
+export const { setCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

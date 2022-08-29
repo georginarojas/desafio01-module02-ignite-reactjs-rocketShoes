@@ -3,8 +3,8 @@ import { Product } from "../../types";
 import { CartState } from "./cartSlice";
 
 const reducers = {
-  setProducts: (state: CartState, action: PayloadAction<Product[] | []>) => {
-    state.productList = action.payload;
+  setCart: (state: CartState, action: PayloadAction<Product[] | []>) => {
+    state.data = action.payload;
   },
 };
 export default reducers;

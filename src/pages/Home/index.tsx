@@ -6,6 +6,10 @@ import { api } from "../../services/api";
 import { formatPrice } from "../../util/format";
 import { useCart } from "../../hooks/useCart";
 
+import { useDispatch, useSelector } from "react-redux";
+import {setProducts} from '../../state-management/cart/cartSlice'
+import { RootState } from "../../state-management/store";
+
 interface Product {
   id: number;
   title: string;
@@ -22,8 +26,10 @@ interface CartItemsAmount {
 }
 
 const Home = (): JSX.Element => {
-  const [products, setProducts] = useState<ProductFormatted[]>([]);
+  // const [products, setProducts] = useState<ProductFormatted[]>([]);
   const { addProduct, cart } = useCart();
+  const dispatch = useDispatch()
+  const products = useSelector((state: RootState) => state.cart.productList) as Product[];
 
     const cartItemsAmount = cart.reduce((sumAmount, product) => {
       let key = product.id;
@@ -34,7 +40,10 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     async function loadProducts() {
       const response = await api.get("/products");
-      setProducts([...response.data]);
+      // setProducts([...response.data]);
+
+      // Using redux
+      dispatch(setProducts(response.data))
     }
 
     loadProducts();

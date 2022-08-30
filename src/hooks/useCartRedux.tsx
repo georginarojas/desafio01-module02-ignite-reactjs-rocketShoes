@@ -102,9 +102,24 @@ export const useCartRedux = () => {
       toast.error("Erro na alteração de quantidade do produto");
     }
   };
+
+  // -- Removing product from cart
+  const removeProduct = (productId: number) => {
+    try {
+      let product = cart.find((cart) => cart.id === productId);
+      if (!product) {
+        throw new Error();
+      }
+      let newCart = cart.filter((product) => product.id !== productId);
+      dispatch(setCart(newCart));
+    } catch {
+      toast.error("Erro na remoção do produto");
+    }
+  };
   return {
     cart,
     addProduct,
     updateProductAmount,
+    removeProduct,
   };
 };

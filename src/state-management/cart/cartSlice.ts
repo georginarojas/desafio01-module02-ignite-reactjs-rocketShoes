@@ -3,7 +3,7 @@ import { Product } from "../../types";
 import reducers from "./reducers";
 
 export interface CartState {
-  data: Product[];
+  data: Product[] | [];
 }
 
 const initialState: CartState = {
@@ -16,6 +16,6 @@ export const cartSlice = createSlice({
   reducers: reducers,
 });
 
-export const { setCart } = cartSlice.actions;
+export const { setCart, getCart } = cartSlice.actions;
 
 export default cartSlice.reducer;

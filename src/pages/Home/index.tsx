@@ -57,7 +57,6 @@ const Home = (): JSX.Element => {
     addProduct(id);
   }
 
-  console.log("CART ", cart)
   return (
     <ProductList>
       {products.map((product) => (

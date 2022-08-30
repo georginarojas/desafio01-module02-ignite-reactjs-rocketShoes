@@ -18,7 +18,8 @@ export const useCartRedux = () => {
 
   useEffect(() => {
     dispatch(getCart());
-  }, [dispatch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // API Request
   // -- Get products by ID

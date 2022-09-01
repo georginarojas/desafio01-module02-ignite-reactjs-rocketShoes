@@ -4,18 +4,22 @@ import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
 } from "react-icons/md";
-import { useCartRedux } from "../../hooks";
+import { useDispatch, useSelector } from "react-redux";
+import { removeProduct } from "../../state-management/cart/cartSlice";
+import { updateProductAmount } from "../../state-management/cart/fetchCart";
+import { RootState } from "../../state-management/store";
 import { Product } from "../../types";
 
 import { formatPrice } from "../../util/format";
 import { Container, ProductTable, Total } from "./styles";
 
 const Cart = (): JSX.Element => {
-  // const { cart, removeProduct, updateProductAmount } = useCart();
-  const { cart, removeProduct, updateProductAmount } = useCartRedux();
-  const cartList = cart as Product[]
+  const dispatch = useDispatch<any>();
+  const { data } = useSelector((state: RootState) => state.cart);
 
-  const cartFormatted = cart.map((product: Product) => ({
+  const cartList = data as Product[];
+
+  const cartFormatted = cartList.map((product: Product) => ({
     ...product,
     priceFormatted: formatPrice(product.price),
     subTotal: formatPrice(product.price * product.amount),
@@ -23,22 +27,33 @@ const Cart = (): JSX.Element => {
 
   const total = formatPrice(
     cartList.reduce((sumTotal, product) => {
-    // cart.reduce((sumTotal, product) => {
       let subTotal = product.amount * product.price;
       return (sumTotal += subTotal);
     }, 0)
   );
 
   function handleProductIncrement(product: Product) {
-    updateProductAmount({productId: product.id, amount: product.amount +1});
+    dispatch(
+      updateProductAmount({
+        productId: product.id,
+        amount: product.amount + 1,
+        cart: cartList,
+      })
+    );
   }
 
   function handleProductDecrement(product: Product) {
-    updateProductAmount({productId: product.id, amount: product.amount -1});
+    dispatch(
+      updateProductAmount({
+        productId: product.id,
+        amount: product.amount - 1,
+        cart: cartList,
+      })
+    );
   }
 
   function handleRemoveProduct(productId: number) {
-    removeProduct(productId);
+   dispatch(removeProduct(productId));
   }
   return (
     <Container>
@@ -53,15 +68,10 @@ const Cart = (): JSX.Element => {
           </tr>
         </thead>
         <tbody>
-
-
           {cartFormatted.map((product) => (
             <tr key={product.id} data-testid="product">
               <td>
-                <img
-                  src={product.image}
-                  alt={product.title}
-                />
+                <img src={product.image} alt={product.title} />
               </td>
               <td>
                 <strong>{product.title}</strong>
@@ -106,7 +116,6 @@ const Cart = (): JSX.Element => {
               </td>
             </tr>
           ))}
-
         </tbody>
       </ProductTable>
 

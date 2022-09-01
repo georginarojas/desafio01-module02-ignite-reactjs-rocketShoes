@@ -2,72 +2,41 @@ import { useEffect } from "react";
 import { MdAddShoppingCart } from "react-icons/md";
 
 import { Loading, ProductList } from "./styles";
-// import { api } from "../../services/api";
 import { formatPrice } from "../../util/format";
-import { useCartRedux } from "../../hooks";
 
 import { useDispatch, useSelector } from "react-redux";
-// import { setProducts } from "../../state-management/products/productSlice";
 import { RootState } from "../../state-management/store";
 import { Product } from "../../types";
 import { fetchProducts } from "../../state-management/products/fetchProducts";
 import { getCart } from "../../state-management/cart/cartSlice";
 import { addNewItem } from "../../state-management/cart/fetchCart";
 
-// interface Product {
-//   id: number;
-//   title: string;
-//   price: number;
-//   image: string;
-// }
-
-// interface ProductFormatted extends Product {
-//   priceFormatted: string;
-// }
-
 interface CartItemsAmount {
   [key: number]: number;
 }
 
 const Home = (): JSX.Element => {
-  // const [products, setProducts] = useState<ProductFormatted[]>([]);
-  // const { addProduct, cart } = useCart();
-  // const { cart, addProduct } = useCartRedux();
-  // const cartList = cart as Product[];
-  const {data, isLoadingCart, errorCart} = useSelector((state: RootState) => state.cart)
-  const cartList = data as Product[];
   const dispatch = useDispatch<any>();
+  const { data } = useSelector((state: RootState) => state.cart);
+  const cartList = data as Product[];
   const { list, isLoading } = useSelector((state: RootState) => state.products);
   const products = list;
 
   const cartItemsAmount = cartList.reduce((sumAmount, product) => {
-    // const cartItemsAmount = cart.reduce((sumAmount, product) => {
     let key = product.id;
     sumAmount[key] = product.amount;
     return sumAmount;
   }, {} as CartItemsAmount);
 
   useEffect(() => {
-    // async function loadProducts() {
-    //   const response = await api.get("/products");
-    //   // setProducts([...response.data]);
-
-    //   // Using redux
-    //   dispatch(setProducts(response.data));
-    // }
-
-    // loadProducts();
-
     // Using redux thunk
     dispatch(fetchProducts());
     dispatch(getCart());
   }, [dispatch]);
 
   function handleAddProduct(id: number) {
-    // addProduct(id);
-
     // Using redux thunk
-    dispatch(addNewItem({productId: id, cart: cartList}));
+    dispatch(addNewItem({ productId: id, cart: cartList }));
   }
 
   return (

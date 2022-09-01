@@ -1,16 +1,15 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { MdShoppingBasket } from 'react-icons/md';
+import React from "react";
+import { Link } from "react-router-dom";
+import { MdShoppingBasket } from "react-icons/md";
 
-import logo from '../../assets/images/logo.svg';
-import { Container, Cart } from './styles';
-import { useCartRedux } from '../../hooks';
+import logo from "../../assets/images/logo.svg";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state-management/store";
+import { Container, Cart } from "./styles";
 
 const Header = (): JSX.Element => {
-  // const { cart } = useCart();
-  const {cart} = useCartRedux()
+  const cart = useSelector((state: RootState) => state.cart.data);
 
-  // const cartSize = Array.from(new Set(cart.map(item => item.id))).length;
   const cartSize = cart.length;
 
   return (

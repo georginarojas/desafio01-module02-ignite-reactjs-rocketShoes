@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../state-management/store";
 import { Product } from "../../types";
 import { fetchProducts } from "../../state-management/products/fetchProducts";
+import { getCart } from "../../state-management/cart/cartSlice";
+import { addNewItem } from "../../state-management/cart/fetchCart";
 
 // interface Product {
 //   id: number;
@@ -30,8 +32,10 @@ interface CartItemsAmount {
 const Home = (): JSX.Element => {
   // const [products, setProducts] = useState<ProductFormatted[]>([]);
   // const { addProduct, cart } = useCart();
-  const { cart, addProduct } = useCartRedux();
-  const cartList = cart as Product[];
+  // const { cart, addProduct } = useCartRedux();
+  // const cartList = cart as Product[];
+  const {data, isLoadingCart, errorCart} = useSelector((state: RootState) => state.cart)
+  const cartList = data as Product[];
   const dispatch = useDispatch<any>();
   const { list, isLoading } = useSelector((state: RootState) => state.products);
   const products = list;
@@ -56,10 +60,14 @@ const Home = (): JSX.Element => {
 
     // Using redux thunk
     dispatch(fetchProducts());
+    dispatch(getCart());
   }, [dispatch]);
 
   function handleAddProduct(id: number) {
-    addProduct(id);
+    // addProduct(id);
+
+    // Using redux thunk
+    dispatch(addNewItem({productId: id, cart: cartList}));
   }
 
   return (

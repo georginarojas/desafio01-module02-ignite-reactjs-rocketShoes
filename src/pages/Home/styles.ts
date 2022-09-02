@@ -48,6 +48,10 @@ export const ProductList = styled.ul`
         background: ${darken(0.06, "#7159c1")};
       }
 
+      &:disabled {
+        cursor: not-allowed;
+      }
+
       div {
         display: flex;
         align-items: center;

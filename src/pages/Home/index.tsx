@@ -17,7 +17,7 @@ interface CartItemsAmount {
 
 const Home = (): JSX.Element => {
   const dispatch = useDispatch<any>();
-  const { data } = useSelector((state: RootState) => state.cart);
+  const { data, isLoadingCart } = useSelector((state: RootState) => state.cart);
   const cartList = data as Product[];
   const { list, isLoading } = useSelector((state: RootState) => state.products);
   const products = list;
@@ -38,7 +38,7 @@ const Home = (): JSX.Element => {
     // Using redux thunk
     dispatch(addNewItem({ productId: id, cart: cartList }));
   }
-
+console.log(isLoadingCart)
   return (
     <>
       {isLoading && <Loading>Carregando...</Loading>}
@@ -53,6 +53,7 @@ const Home = (): JSX.Element => {
                 type="button"
                 data-testid="add-product-button"
                 onClick={() => handleAddProduct(product.id)}
+                disabled={isLoadingCart}
               >
                 <div data-testid="cart-product-quantity">
                   <MdAddShoppingCart size={16} color="#FFF" />

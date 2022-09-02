@@ -1,41 +1,28 @@
 import { useEffect } from "react";
 import { MdAddShoppingCart } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
 
 import { ProductList } from "./styles";
 import { api } from "../../services/api";
 import { formatPrice } from "../../util/format";
 import { useCartRedux } from "../../hooks";
 
-import { useDispatch, useSelector } from "react-redux";
 import {setProducts} from '../../state-management/products/productSlice'
 import { RootState } from "../../state-management/store";
 import { Product } from "../../types";
 
-// interface Product {
-//   id: number;
-//   title: string;
-//   price: number;
-//   image: string;
-// }
-
-// interface ProductFormatted extends Product {
-//   priceFormatted: string;
-// }
 
 interface CartItemsAmount {
   [key: number]: number;
 }
 
 const Home = (): JSX.Element => {
-  // const [products, setProducts] = useState<ProductFormatted[]>([]);
-  // const { addProduct, cart } = useCart();
   const { cart , addProduct } = useCartRedux()
   const cartList = cart as Product[]
   const dispatch = useDispatch()
   const products = useSelector((state: RootState) => state.products.list) as Product[];
 
     const cartItemsAmount = cartList.reduce((sumAmount, product) => {
-    // const cartItemsAmount = cart.reduce((sumAmount, product) => {
       let key = product.id;
       sumAmount[key] = product.amount;
       return sumAmount;
@@ -44,9 +31,6 @@ const Home = (): JSX.Element => {
   useEffect(() => {
     async function loadProducts() {
       const response = await api.get("/products");
-      // setProducts([...response.data]);
-
-      // Using redux
       dispatch(setProducts(response.data))
     }
 

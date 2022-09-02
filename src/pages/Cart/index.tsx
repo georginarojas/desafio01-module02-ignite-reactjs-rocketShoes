@@ -11,7 +11,6 @@ import { formatPrice } from "../../util/format";
 import { Container, ProductTable, Total } from "./styles";
 
 const Cart = (): JSX.Element => {
-  // const { cart, removeProduct, updateProductAmount } = useCart();
   const { cart, removeProduct, updateProductAmount } = useCartRedux();
   const cartList = cart as Product[]
 
@@ -23,7 +22,6 @@ const Cart = (): JSX.Element => {
 
   const total = formatPrice(
     cartList.reduce((sumTotal, product) => {
-    // cart.reduce((sumTotal, product) => {
       let subTotal = product.amount * product.price;
       return (sumTotal += subTotal);
     }, 0)

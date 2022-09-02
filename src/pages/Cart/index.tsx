@@ -4,16 +4,14 @@ import {
   MdAddCircleOutline,
   MdRemoveCircleOutline,
 } from "react-icons/md";
-import { useCartRedux } from "../../hooks";
+import { useCart } from "../../hooks/useCart";
 import { Product } from "../../types";
 
 import { formatPrice } from "../../util/format";
 import { Container, ProductTable, Total } from "./styles";
 
 const Cart = (): JSX.Element => {
-  // const { cart, removeProduct, updateProductAmount } = useCart();
-  const { cart, removeProduct, updateProductAmount } = useCartRedux();
-  const cartList = cart as Product[]
+  const { cart, removeProduct, updateProductAmount } = useCart();
 
   const cartFormatted = cart.map((product: Product) => ({
     ...product,
@@ -22,8 +20,7 @@ const Cart = (): JSX.Element => {
   }));
 
   const total = formatPrice(
-    cartList.reduce((sumTotal, product) => {
-    // cart.reduce((sumTotal, product) => {
+    cart.reduce((sumTotal, product) => {
       let subTotal = product.amount * product.price;
       return (sumTotal += subTotal);
     }, 0)

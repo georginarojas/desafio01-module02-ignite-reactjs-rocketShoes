@@ -67,12 +67,3 @@ export const ProductList = styled.ul`
     }
   }
 `;
-
-export const Loading = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  font-size: 16px;
-  margin-top: 35%;
-`;

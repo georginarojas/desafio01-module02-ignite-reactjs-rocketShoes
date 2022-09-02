@@ -6,9 +6,11 @@ import logo from "../../assets/images/logo.svg";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state-management/store";
 import { Container, Cart } from "./styles";
+import Loader from "../Loader";
 
 const Header = (): JSX.Element => {
   const cart = useSelector((state: RootState) => state.cart.data);
+  const isLoading = useSelector((state: RootState) => state.cart.isLoadingCart);
 
   const cartSize = cart.length;
 
@@ -20,10 +22,16 @@ const Header = (): JSX.Element => {
 
       <Cart to="/cart">
         <div>
-          <strong>Meu carrinho</strong>
-          <span data-testid="cart-size">
-            {cartSize === 1 ? `${cartSize} item` : `${cartSize} itens`}
-          </span>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <strong>Meu carrinho</strong>
+              <span data-testid="cart-size">
+                {cartSize === 1 ? `${cartSize} item` : `${cartSize} itens`}
+              </span>
+            </>
+          )}
         </div>
         <MdShoppingBasket size={36} color="#FFF" />
       </Cart>
